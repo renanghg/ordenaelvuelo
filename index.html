@@ -3,257 +3,488 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>¡Ordena el Vuelo! 🛫</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>¡Ordena el Vuelo! ✈️</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --sky1: #0ea5e9;
-    --green: #22c55e;
-    --red: #f43f5e;
-    --orange: #fb923c;
-    --sun: #fbbf24;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ══════════════════════════════════════════
+   BASE
+══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: linear-gradient(180deg, #0369a1 0%, #0ea5e9 40%, #7dd3fc 75%, #bae6fd 100%);
-    min-height: 100vh;
-    padding: 20px;
-    overflow-x: hidden;
-    position: relative;
-  }
+:root {
+  --asphalt:   #0d1117;
+  --asphalt2:  #161b22;
+  --asphalt3:  #1c2333;
+  --line-y:    #f5c518;   /* amarillo pista */
+  --line-w:    #e8eaf0;   /* blanco pista */
+  --neon-g:    #00e676;   /* verde neón correcto */
+  --neon-r:    #ff1744;   /* rojo neón incorrecto */
+  --neon-b:    #29b6f6;   /* azul neón selección */
+  --amber:     #ffb300;   /* luces pista */
+  --panel:     rgba(255,255,255,0.04);
+  --border:    rgba(255,255,255,0.1);
+}
 
-  /* Sol */
-  .sun {
-    position: fixed; top: -40px; right: 60px;
-    width: 120px; height: 120px;
-    background: radial-gradient(circle, #fde68a, #fbbf24);
-    border-radius: 50%;
-    box-shadow: 0 0 60px rgba(251,191,36,0.5);
-    animation: pulseSun 4s ease-in-out infinite;
-    pointer-events: none; z-index: 0;
-  }
-  @keyframes pulseSun {
-    0%,100% { box-shadow: 0 0 60px rgba(251,191,36,0.5); }
-    50% { box-shadow: 0 0 90px rgba(251,191,36,0.7); }
-  }
+html { font-size: 14px; }
 
-  /* Nubes */
-  .cloud { position:fixed; pointer-events:none; opacity:0.15; z-index:0; }
-  .cloud span {
-    display:block; background:white; border-radius:50px;
-    position:relative;
-  }
-  .cloud span::before, .cloud span::after {
-    content:''; position:absolute; background:white; border-radius:50%;
-  }
-  .c1 { top:8%; animation: drift 20s linear infinite; }
-  .c1 span { width:160px; height:44px; }
-  .c1 span::before { width:70px;height:70px;top:-38px;left:20px; }
-  .c1 span::after  { width:55px;height:55px;top:-28px;left:75px; }
-  .c2 { top:22%; right:0; animation: drift 28s linear infinite reverse; opacity:0.1; }
-  .c2 span { width:200px; height:55px; }
-  .c2 span::before { width:85px;height:85px;top:-44px;left:28px; }
-  .c2 span::after  { width:65px;height:65px;top:-32px;left:95px; }
-  @keyframes drift {
-    from { transform: translateX(-250px); }
-    to   { transform: translateX(110vw); }
-  }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--asphalt);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  color: #e2e8f0;
+}
 
-  .wrapper { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+/* ══════════════════════════════════════════
+   FONDO — PISTA DE ATERRIZAJE NOCTURNA
+══════════════════════════════════════════ */
 
-  /* Header */
-  .game-header { text-align:center; margin-bottom:20px; }
-  .plane-emoji { font-size:3rem; display:block; animation:planeFly 2s ease-in-out infinite; margin-bottom:6px; }
-  @keyframes planeFly {
-    0%,100% { transform: translateY(0) rotate(-3deg); }
-    50%      { transform: translateY(-10px) rotate(3deg); }
-  }
-  h1 {
-    font-family:'Fredoka One',cursive;
-    font-size: clamp(1.8rem,6vw,2.8rem);
-    color:white; text-shadow:0 3px 0 rgba(0,0,0,0.2);
-    margin-bottom:4px;
-  }
-  .subtitle { color:rgba(255,255,255,0.85); font-size:.95rem; font-weight:600; }
+/* Cielo degradado con horizonte */
+.sky {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(180deg,
+    #020408 0%,
+    #050d1a 30%,
+    #0a1628 55%,
+    #111827 70%,
+    #1c2333 80%,
+    #252d3d 100%
+  );
+}
 
-  /* Scoreboard */
-  .scoreboard { display:flex; gap:10px; justify-content:center; margin-bottom:18px; flex-wrap:wrap; }
-  .score-chip {
-    background:rgba(255,255,255,0.2); backdrop-filter:blur(8px);
-    border:2px solid rgba(255,255,255,0.3); border-radius:100px;
-    padding:7px 18px; color:white; font-weight:800; font-size:.9rem;
-    display:flex; align-items:center; gap:5px;
-  }
+/* Estrellas */
+.stars-layer {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+}
+.star {
+  position: absolute; border-radius: 50%; background: white;
+  animation: twinkle var(--d,3s) var(--dl,0s) ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%,100% { opacity: var(--op,.3); transform: scale(1); }
+  50%      { opacity: 1;            transform: scale(1.6); }
+}
 
-  /* Instrucciones */
-  .instructions {
-    background:rgba(255,255,255,0.15); backdrop-filter:blur(8px);
-    border:2px dashed rgba(255,255,255,0.4); border-radius:18px;
-    padding:14px 18px; color:white; font-size:.88rem; font-weight:600;
-    text-align:center; margin-bottom:20px; line-height:1.5;
-  }
+/* Luna */
+.moon {
+  position: fixed; top: 30px; right: 80px; z-index: 2;
+  width: 60px; height: 60px;
+  background: radial-gradient(circle at 35% 35%, #fff9e6, #f5c518);
+  border-radius: 50%;
+  box-shadow: 0 0 30px rgba(245,197,24,.4), 0 0 80px rgba(245,197,24,.15);
+  pointer-events: none;
+}
+.moon::after {
+  content:''; position:absolute; width:16px; height:16px;
+  background: var(--asphalt); border-radius:50%;
+  top:8px; left:8px; opacity:.3;
+}
 
-  /* Feedback */
-  .feedback-banner {
-    text-align:center; font-family:'Fredoka One',cursive; font-size:1.1rem;
-    padding:14px 20px; border-radius:18px; margin-bottom:16px;
-    display:none; animation:slideDown .4s ease both;
-  }
-  @keyframes slideDown {
-    from { transform:translateY(-16px); opacity:0; }
-    to   { transform:translateY(0); opacity:1; }
-  }
-  .feedback-banner.win  { background:linear-gradient(135deg,#dcfce7,#bbf7d0); color:#15803d; border:3px solid #86efac; display:block; }
-  .feedback-banner.lose { background:linear-gradient(135deg,#fff1f2,#ffe4e6); color:#be123c; border:3px solid #fda4af; display:block; }
+/* Pista asfaltada en perspectiva (fondo) */
+.runway-bg {
+  position: fixed;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 55vh;
+  z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, #0a0f1a 0%, #1a2035 100%);
+  clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+}
+/* Franja central amarilla */
+.runway-bg::before {
+  content:''; position:absolute; inset:0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px, transparent 22px,
+    rgba(245,197,24,.6) 22px, rgba(245,197,24,.6) 34px
+  );
+  clip-path: polygon(46% 0%, 54% 0%, 56% 100%, 44% 100%);
+}
+/* Bordes blancos pista */
+.runway-bg::after {
+  content:''; position:absolute; inset:0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.5) 0px, rgba(255,255,255,.5) 3px, transparent 3px) no-repeat 20% 0 / 3px 100%,
+    linear-gradient(90deg, rgba(255,255,255,.5) 0px, rgba(255,255,255,.5) 3px, transparent 3px) no-repeat 80% 0 / 3px 100%;
+}
 
-  /* Zona de juego */
-  .game-area { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
-  @media(max-width:480px){ .game-area { grid-template-columns:1fr; } }
+/* Luces de pista (balizas) */
+.runway-lights {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 55vh; z-index: 3; pointer-events: none;
+}
+.light-dot {
+  position: absolute; border-radius: 50%;
+  animation: blinkLight var(--bd,1.2s) var(--bdelay,0s) ease-in-out infinite;
+}
+@keyframes blinkLight {
+  0%,100% { opacity:.9; }
+  50%      { opacity:.2; }
+}
 
-  .zone {
-    background:rgba(255,255,255,0.12); backdrop-filter:blur(8px);
-    border:2px dashed rgba(255,255,255,0.4); border-radius:20px;
-    padding:12px; min-height:300px;
-    transition: background .2s, border-color .2s;
-  }
-  .zone.drag-over-zone {
-    background:rgba(255,255,255,0.25);
-    border-color:rgba(255,255,255,0.8);
-  }
-  .zone-title {
-    font-family:'Fredoka One',cursive; font-size:1rem; color:white;
-    text-align:center; margin-bottom:10px;
-    text-shadow:0 2px 4px rgba(0,0,0,0.2);
-  }
+/* Avión animado cruzando el cielo */
+.flying-plane {
+  position: fixed; top: 12%; z-index: 4; pointer-events: none;
+  font-size: 1.8rem;
+  animation: flyAcross 18s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(41,182,246,.8));
+}
+@keyframes flyAcross {
+  from { left: -80px; transform: scaleX(1); }
+  49%  { left: 110vw;  transform: scaleX(1); opacity:1; }
+  50%  { left: 110vw;  transform: scaleX(-1); opacity:0; }
+  51%  { left: 110vw;  transform: scaleX(-1); opacity:1; }
+  to   { left: -80px;  transform: scaleX(-1); }
+}
 
-  .cards-container { display:flex; flex-direction:column; gap:7px; min-height:260px; }
+/* Torre de control silueta */
+.tower {
+  position: fixed; bottom: 0; right: 40px; z-index: 3;
+  width: 36px; height: 130px; pointer-events: none;
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.tower::before {
+  content:''; position:absolute; top:-18px; left:-12px;
+  width:60px; height:22px;
+  background:#111827; border:1px solid rgba(255,255,255,.1);
+  border-bottom:none;
+}
+.tower::after {
+  content:''; position:absolute; top:-28px; left:14px;
+  width:8px; height:12px; background:var(--amber);
+  box-shadow: 0 0 12px var(--amber), 0 0 24px rgba(255,179,0,.5);
+  border-radius:50% 50% 0 0;
+  animation: beaconSpin 2s linear infinite;
+}
+@keyframes beaconSpin {
+  0%,100% { opacity:1; } 50% { opacity:.2; }
+}
 
-  /* Tarjetas */
-  .phase-card {
-    background:white; border-radius:13px; padding:11px 13px;
-    display:flex; align-items:center; gap:9px;
-    cursor:grab; user-select:none;
-    box-shadow:0 3px 10px rgba(0,0,0,0.12);
-    border:3px solid transparent;
-    transition: transform .15s, box-shadow .15s, border-color .15s, opacity .15s;
-    touch-action:none;
-  }
-  .phase-card:active { cursor:grabbing; }
-  .phase-card.dragging { opacity:.4; transform:scale(.96); }
-  .phase-card.drag-over-card { border-color:var(--sky1); transform:scale(1.03); }
+/* ══════════════════════════════════════════
+   LAYOUT PRINCIPAL
+══════════════════════════════════════════ */
+.wrapper {
+  position: relative; z-index: 10;
+  max-width: 960px; margin: 0 auto;
+  padding: 20px 16px 40px;
+}
 
-  .phase-card.correct-card { border-color:var(--green); background:#f0fdf4; animation:popIn .3s ease; }
-  .phase-card.wrong-card   { border-color:var(--red);   background:#fff1f2; animation:shake .4s ease; }
-  @keyframes popIn { 0%{transform:scale(.9)}60%{transform:scale(1.06)}100%{transform:scale(1)} }
-  @keyframes shake { 0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)} }
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 20px; }
 
-  .card-emoji { font-size:1.3rem; flex-shrink:0; }
-  .card-text  { font-weight:700; font-size:.85rem; color:#1e293b; line-height:1.3; flex:1; }
-  .card-num {
-    margin-left:auto; background:#e0f2fe; color:#0369a1;
-    width:22px; height:22px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:11px; font-weight:800; flex-shrink:0;
-    opacity:0; transition:opacity .3s;
-  }
-  .correct-card .card-num { opacity:1; background:var(--green); color:white; }
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,179,0,.12); border: 1px solid rgba(255,179,0,.3);
+  border-radius: 100px; padding: 5px 16px;
+  font-family: 'Orbitron', monospace; font-size: .68rem;
+  letter-spacing: .12em; color: var(--amber);
+  margin-bottom: 14px;
+}
 
-  /* Botones */
-  .btn-row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:18px; }
-  .btn-check {
-    font-family:'Fredoka One',cursive; font-size:1.05rem;
-    background:linear-gradient(135deg,var(--green),#16a34a);
-    color:white; border:none; border-radius:100px; padding:13px 34px;
-    cursor:pointer; box-shadow:0 4px 0 #15803d, 0 6px 18px rgba(34,197,94,.4);
-    transition:all .15s;
-  }
-  .btn-check:hover { transform:translateY(-2px); }
-  .btn-check:active { transform:translateY(2px); box-shadow:0 2px 0 #15803d; }
-  .btn-reset {
-    font-family:'Fredoka One',cursive; font-size:1.05rem;
-    background:linear-gradient(135deg,var(--orange),#ea580c);
-    color:white; border:none; border-radius:100px; padding:13px 26px;
-    cursor:pointer; box-shadow:0 4px 0 #c2410c, 0 6px 18px rgba(251,146,60,.4);
-    transition:all .15s;
-  }
-  .btn-reset:hover { transform:translateY(-2px); }
-  .btn-reset:active { transform:translateY(2px); box-shadow:0 2px 0 #c2410c; }
+.header h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.4rem, 5vw, 2.4rem);
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(41,182,246,.5), 0 2px 0 rgba(0,0,0,.5);
+  letter-spacing: .04em;
+  margin-bottom: 6px;
+}
 
-  /* Pista */
-  .hint-section {
-    background:rgba(255,255,255,0.12); backdrop-filter:blur(8px);
-    border:2px solid rgba(255,255,255,0.25); border-radius:16px;
-    padding:13px 17px; margin-bottom:20px;
-  }
-  .hint-toggle {
-    background:none; border:none; color:white;
-    font-family:'Nunito',sans-serif; font-weight:800; font-size:.9rem;
-    cursor:pointer; display:flex; align-items:center; gap:7px; width:100%;
-  }
-  .hint-body { display:none; margin-top:9px; color:rgba(255,255,255,.9); font-size:.85rem; font-weight:600; line-height:1.7; }
-  .hint-body.show { display:block; }
+.header .sub {
+  color: rgba(255,255,255,.5); font-size: .85rem; font-weight: 500;
+}
 
-  /* Confetti */
-  .confetti-piece {
-    position:fixed; pointer-events:none; z-index:999;
-    animation:confettiFall var(--dur) ease-in both;
-  }
-  @keyframes confettiFall {
-    0%   { transform:translateY(-20px) rotate(0deg) translateX(0); opacity:1; }
-    100% { transform:translateY(100vh) rotate(720deg) translateX(var(--drift)); opacity:0; }
-  }
-  @keyframes scoreUp { 0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)} }
-  .score-anim { animation:scoreUp .4s ease; }
+/* ── SCOREBOARD ── */
+.scoreboard {
+  display: flex; justify-content: center; gap: 10px;
+  flex-wrap: wrap; margin-bottom: 18px;
+}
+.chip {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 10px; padding: 7px 16px;
+  font-family: 'Orbitron', monospace; font-size: .72rem;
+  color: rgba(255,255,255,.7); letter-spacing: .05em;
+  display: flex; align-items: center; gap: 6px;
+}
+.chip strong { color: var(--line-y); font-size: .95rem; }
+
+/* ── NIVEL TITLE ── */
+.level-title {
+  text-align: center; margin-bottom: 14px;
+  font-family: 'Orbitron', monospace; font-size: .8rem;
+  color: var(--neon-b); letter-spacing: .1em; text-transform: uppercase;
+}
+
+/* ── FEEDBACK ── */
+.feedback {
+  text-align: center; padding: 12px 18px; border-radius: 12px;
+  margin-bottom: 16px; font-weight: 800; font-size: .95rem;
+  display: none; animation: popIn .3s ease both;
+}
+.feedback.win  { display:block; background:rgba(0,230,118,.1); border:1.5px solid var(--neon-g); color:var(--neon-g); }
+.feedback.lose { display:block; background:rgba(255,23,68,.08); border:1.5px solid var(--neon-r); color:var(--neon-r); }
+
+/* ══════════════════════════════════════════
+   ZONA DE JUEGO
+══════════════════════════════════════════ */
+
+/* Instrucción inline */
+.tip {
+  text-align: center; font-size: .78rem; color: rgba(255,255,255,.4);
+  margin-bottom: 10px; font-weight: 600;
+}
+.tip span { color: var(--neon-b); }
+
+/* Zona = fila horizontal de tarjetas */
+.zone-wrap { margin-bottom: 14px; }
+
+.zone-label {
+  font-family: 'Orbitron', monospace; font-size: .65rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+.zone-label .zl-icon { font-size: 1rem; }
+.zone-label .zl-text { color: rgba(255,255,255,.55); }
+.zone-label .zl-count {
+  margin-left: auto; background: var(--panel); border: 1px solid var(--border);
+  border-radius: 6px; padding: 2px 8px; font-size: .62rem; color: var(--amber);
+}
+
+/* La fila scrollable */
+.cards-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-height: 52px;
+  padding: 10px 12px;
+  background: var(--panel);
+  border: 1.5px dashed var(--border);
+  border-radius: 14px;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.cards-row.drag-over-zone {
+  border-color: var(--neon-b);
+  background: rgba(41,182,246,.06);
+}
+/* zona destino tiene borde más marcado */
+#zone-target .cards-row {
+  border-color: rgba(41,182,246,.2);
+  min-height: 60px;
+}
+/* Placeholder vacío */
+.cards-row:empty::after,
+.cards-row.empty-hint::after {
+  content: attr(data-empty);
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.2); font-size: .8rem; font-weight: 600;
+  pointer-events: none;
+}
+
+/* Separador visual entre zonas */
+.zone-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 6px 0 14px; color: rgba(255,255,255,.2); font-size: .75rem;
+}
+.zone-divider::before, .zone-divider::after {
+  content:''; flex:1; height:1px; background:rgba(255,255,255,.08);
+}
+
+/* ══════════════════════════════════════════
+   TARJETAS
+══════════════════════════════════════════ */
+.phase-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px 6px 8px;
+  border-radius: 9px;
+  background: var(--asphalt2);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+  font-size: .8rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  white-space: nowrap;
+  transition: transform .15s, border-color .15s, background .15s, box-shadow .15s, opacity .15s;
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.phase-card:hover {
+  border-color: rgba(255,255,255,.25);
+  background: var(--asphalt3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+}
+.phase-card .ce { font-size: 1rem; flex-shrink: 0; }
+.phase-card .ct { line-height: 1.2; }
+
+/* Estados */
+.phase-card.selected {
+  border-color: var(--neon-b);
+  background: rgba(41,182,246,.12);
+  box-shadow: 0 0 0 2px rgba(41,182,246,.25), 0 4px 14px rgba(0,0,0,.4);
+  transform: translateY(-2px) scale(1.03);
+  color: #fff;
+}
+.phase-card.dragging  { opacity: .3; transform: scale(.95); }
+.phase-card.drag-over-card { border-color: var(--neon-b); transform: translateX(4px); }
+
+.phase-card.correct-card {
+  border-color: var(--neon-g);
+  background: rgba(0,230,118,.1);
+  color: #a7f3d0;
+  animation: popIn .3s ease;
+}
+.phase-card.wrong-card {
+  border-color: var(--neon-r);
+  background: rgba(255,23,68,.1);
+  color: #fca5a5;
+  animation: shakeCard .4s ease;
+}
+
+@keyframes popIn   { 0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:scale(1)} }
+@keyframes shakeCard { 0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)} }
+
+/* Número de posición (aparece en correcto) */
+.phase-card .cn {
+  font-family: 'Orbitron', monospace; font-size: .6rem;
+  background: var(--neon-g); color: #000;
+  border-radius: 4px; padding: 1px 5px;
+  display: none;
+}
+.phase-card.correct-card .cn { display: inline-block; }
+
+/* ══════════════════════════════════════════
+   BOTONES
+══════════════════════════════════════════ */
+.btn-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:16px 0; }
+
+.btn {
+  font-family: 'Orbitron', monospace; font-size: .75rem; letter-spacing: .08em;
+  border: none; border-radius: 10px; padding: 11px 26px;
+  cursor: pointer; font-weight: 800; transition: all .15s;
+}
+.btn-verify {
+  background: var(--neon-g); color: #000;
+  box-shadow: 0 4px 0 #00a854, 0 4px 20px rgba(0,230,118,.3);
+}
+.btn-verify:hover { transform:translateY(-2px); box-shadow:0 6px 0 #00a854, 0 6px 24px rgba(0,230,118,.4); }
+.btn-verify:active { transform:translateY(2px); box-shadow:0 2px 0 #00a854; }
+
+.btn-reset {
+  background: var(--asphalt3); color: rgba(255,255,255,.6);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 0 rgba(0,0,0,.4);
+}
+.btn-reset:hover { transform:translateY(-2px); color:#fff; border-color:rgba(255,255,255,.3); }
+.btn-reset:active { transform:translateY(2px); }
+
+/* ══════════════════════════════════════════
+   PISTA HINT
+══════════════════════════════════════════ */
+.hint-wrap {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 16px; margin-top: 4px;
+}
+.hint-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .82rem;
+  color: var(--amber); display: flex; align-items: center; gap: 8px; width: 100%;
+}
+.hint-body {
+  display:none; margin-top:9px; font-size:.8rem;
+  color:rgba(255,255,255,.55); line-height:1.7; font-weight:600;
+}
+.hint-body.show { display:block; }
+
+/* ══════════════════════════════════════════
+   CONFETTI
+══════════════════════════════════════════ */
+.confetti-piece {
+  position:fixed; pointer-events:none; z-index:999;
+  animation:cfall var(--d) ease-in both;
+}
+@keyframes cfall {
+  from { transform:translateY(-20px) rotate(0) translateX(0); opacity:1; }
+  to   { transform:translateY(105vh) rotate(900deg) translateX(var(--dx)); opacity:0; }
+}
 </style>
 </head>
 <body>
 
-<div class="cloud c1"><span></span></div>
-<div class="cloud c2"><span></span></div>
-<div class="sun"></div>
+<!-- Fondo -->
+<div class="sky"></div>
+<div class="stars-layer" id="stars"></div>
+<div class="moon"></div>
+<div class="runway-bg"></div>
+<div class="runway-lights" id="rlights"></div>
+<div class="flying-plane">✈️</div>
+<div class="tower"></div>
 
 <div class="wrapper">
 
-  <div class="game-header">
-    <span class="plane-emoji">✈️</span>
-    <h1>¡Ordena el Vuelo!</h1>
-    <p class="subtitle">Arrastra las fases en el orden correcto del vuelo</p>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">🛬 SIMULADOR DE CABINA · MÓDULO 4</div>
+    <h1>ORDENA EL VUELO</h1>
+    <p class="sub">Coloca las fases en el orden correcto del vuelo</p>
   </div>
 
+  <!-- SCORE -->
   <div class="scoreboard">
-    <div class="score-chip">⭐ Puntos: <strong id="score-display">0</strong></div>
-    <div class="score-chip">🎯 Intentos: <strong id="attempts-display">0</strong></div>
-    <div class="score-chip">✅ Nivel: <strong id="level-display">1</strong>/3</div>
+    <div class="chip">⭐ PUNTOS <strong id="score-display">0</strong></div>
+    <div class="chip">🎯 INTENTOS <strong id="attempts-display">0</strong></div>
+    <div class="chip">🛫 NIVEL <strong id="level-display">1</strong>/3</div>
   </div>
 
-  <div class="feedback-banner" id="feedback-banner"></div>
+  <!-- FEEDBACK -->
+  <div class="feedback" id="feedback"></div>
 
-  <div class="instructions">
-    👇 <strong>Haz clic en una tarjeta</strong> para seleccionarla (se resalta),
-    luego <strong>haz clic en la zona derecha</strong> para moverla ahí.<br>
-    También puedes <strong>arrastrarla</strong> si lo prefieres. ✈️
-  </div>
+  <!-- NIVEL TITLE -->
+  <div class="level-title" id="level-title"></div>
 
-  <div class="game-area">
-    <div class="zone" id="zone-source">
-      <div class="zone-title">📦 Fases disponibles</div>
-      <div class="cards-container" id="source-zone"></div>
+  <!-- TIP -->
+  <p class="tip">
+    <span>Clic</span> en una fase para seleccionarla · <span>Clic</span> en la zona de destino para moverla · o arrástrala directamente
+  </p>
+
+  <!-- ZONA ORIGEN -->
+  <div class="zone-wrap" id="zone-source">
+    <div class="zone-label">
+      <span class="zl-icon">📦</span>
+      <span class="zl-text">FASES DISPONIBLES</span>
+      <span class="zl-count" id="src-count">0</span>
     </div>
-    <div class="zone" id="zone-target">
-      <div class="zone-title">🛫 Tu orden de vuelo</div>
-      <div class="cards-container" id="target-zone"></div>
-    </div>
+    <div class="cards-row" id="source-row" data-empty="— Todas las fases han sido movidas —"></div>
   </div>
 
+  <!-- DIVISOR -->
+  <div class="zone-divider">▼ TU ORDEN DE VUELO ▼</div>
+
+  <!-- ZONA DESTINO -->
+  <div class="zone-wrap" id="zone-target">
+    <div class="zone-label">
+      <span class="zl-icon">🛫</span>
+      <span class="zl-text">SECUENCIA DE VUELO</span>
+      <span class="zl-count" id="tgt-count">0</span>
+    </div>
+    <div class="cards-row" id="target-row" data-empty="— Mueve aquí las fases en orden —"></div>
+  </div>
+
+  <!-- BOTONES -->
   <div class="btn-row">
-    <button class="btn-check" onclick="checkOrder()">✓ Verificar orden</button>
-    <button class="btn-reset" onclick="resetLevel()">↺ Reiniciar</button>
+    <button class="btn btn-verify" onclick="checkOrder()">✓ VERIFICAR ORDEN</button>
+    <button class="btn btn-reset"  onclick="resetLevel()">↺ REINICIAR</button>
   </div>
 
-  <div class="hint-section">
-    <button class="hint-toggle" onclick="toggleHint()">
+  <!-- PISTA -->
+  <div class="hint-wrap">
+    <button class="hint-btn" onclick="toggleHint()">
       💡 ¿Necesitas una pista? <span id="hint-arrow">▼</span>
     </button>
     <div class="hint-body" id="hint-body"></div>
@@ -262,100 +493,150 @@
 </div>
 
 <script>
-/* ─── DATA ─────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════ */
 const levels = [
   {
-    name: "Nivel 2 — Solo las críticas",
-    hint: "Primero embarcan los pasajeros, el avión rueda a la pista, despega, sube, vuela en crucero, baja, se aproxima, aterriza y vuelve a la puerta.",
+    title: "NIVEL 1 — LAS 9 FASES DEL VUELO",
+    hint: "Recuerda: primero embarcan los pasajeros, el avión rueda a la pista, despega, sube, vuela en crucero, baja, se aproxima, aterriza y vuelve a la puerta.",
     phases: [
-      { text: "Embarque y puesta en marcha", emoji: "🚪", order: 1 },
-      { text: "Rodaje (Taxi)",                emoji: "🛞", order: 2 },
-      { text: "Despegue",                     emoji: "🛫", order: 3 },
-      { text: "Ascenso",                      emoji: "📈", order: 4 },
-      { text: "Crucero",                      emoji: "☁️", order: 5 },
-      { text: "Descenso",                     emoji: "📉", order: 6 },
-      { text: "Aproximación",                 emoji: "🎯", order: 7 },
-      { text: "Aterrizaje",                   emoji: "🛬", order: 8 },
-      { text: "Rodaje a puerta",              emoji: "🏁", order: 9 },
+      { t:"Embarque y puesta en marcha", e:"🚪", o:1 },
+      { t:"Rodaje (Taxi)",               e:"🛞", o:2 },
+      { t:"Despegue",                    e:"🛫", o:3 },
+      { t:"Ascenso",                     e:"📈", o:4 },
+      { t:"Crucero",                     e:"☁️", o:5 },
+      { t:"Descenso",                    e:"📉", o:6 },
+      { t:"Aproximación",                e:"🎯", o:7 },
+      { t:"Aterrizaje",                  e:"🛬", o:8 },
+      { t:"Rodaje a puerta",             e:"🏁", o:9 },
     ]
   },
   {
-    name: "Nivel 2 — Fases críticas",
-    hint: "Las más críticas son Despegue y Aterrizaje. Entre ellas: Ascenso → Crucero → Descenso → Aproximación.",
+    title: "NIVEL 2 — FASES CRÍTICAS",
+    hint: "Las fases más críticas son Despegue y Aterrizaje. Entre ellas: Ascenso → Crucero → Descenso → Aproximación.",
     phases: [
-      { text: "Despegue",          emoji: "🛫", order: 1 },
-      { text: "Ascenso inicial",   emoji: "⬆️",  order: 2 },
-      { text: "Crucero en ruta",   emoji: "✈️",  order: 3 },
-      { text: "Inicio de descenso",emoji: "⬇️",  order: 4 },
-      { text: "Aproximación final",emoji: "🎯", order: 5 },
-      { text: "Toque de pista",    emoji: "🛬", order: 6 },
+      { t:"Despegue",           e:"🛫", o:1 },
+      { t:"Ascenso inicial",    e:"⬆️",  o:2 },
+      { t:"Crucero en ruta",    e:"✈️",  o:3 },
+      { t:"Inicio de descenso", e:"⬇️",  o:4 },
+      { t:"Aproximación final", e:"🎯", o:5 },
+      { t:"Toque de pista",     e:"🛬", o:6 },
     ]
   },
   {
-    name: "Nivel 3 — Maestra del cielo 🏆",
+    title: "NIVEL 3 — MAESTRA DEL CIELO 🏆",
     hint: "Primero preparan la cabina, embarque, cierran puertas, pushback, rodaje, despegue, ascenso, servicio, preparan para aterrizaje, descenso, aterrizaje y desembarque.",
     phases: [
-      { text: "Preparación de cabina",           emoji: "🧹", order: 1 },
-      { text: "Embarque de pasajeros",           emoji: "👥", order: 2 },
-      { text: "Cierre y revisión de puertas",    emoji: "🔒", order: 3 },
-      { text: "Pushback y puesta en marcha",     emoji: "⚙️", order: 4 },
-      { text: "Rodaje a pista (Taxi)",           emoji: "🛞", order: 5 },
-      { text: "Despegue",                        emoji: "🛫", order: 6 },
-      { text: "Ascenso",                         emoji: "📈", order: 7 },
-      { text: "Servicio en cabina (Crucero)",    emoji: "🍽️", order: 8 },
-      { text: "Preparar cabina para aterrizaje", emoji: "💺", order: 9 },
-      { text: "Descenso y Aproximación",         emoji: "📉", order: 10 },
-      { text: "Aterrizaje",                      emoji: "🛬", order: 11 },
-      { text: "Rodaje a puerta y desembarque",   emoji: "🚶", order: 12 },
+      { t:"Preparación de cabina",           e:"🧹", o:1  },
+      { t:"Embarque de pasajeros",           e:"👥", o:2  },
+      { t:"Cierre y revisión de puertas",    e:"🔒", o:3  },
+      { t:"Pushback y puesta en marcha",     e:"⚙️", o:4  },
+      { t:"Rodaje a pista (Taxi)",           e:"🛞", o:5  },
+      { t:"Despegue",                        e:"🛫", o:6  },
+      { t:"Ascenso",                         e:"📈", o:7  },
+      { t:"Servicio en cabina (Crucero)",    e:"🍽️", o:8  },
+      { t:"Preparar cabina para aterrizaje", e:"💺", o:9  },
+      { t:"Descenso y Aproximación",         e:"📉", o:10 },
+      { t:"Aterrizaje",                      e:"🛬", o:11 },
+      { t:"Rodaje a puerta y desembarque",   e:"🚶", o:12 },
     ]
   }
 ];
 
-/* ─── STATE ─────────────────────────────────────────── */
-let currentLevel = 0;
-let score = 0;
-let attempts = 0;
-let selectedCard = null;   // para el modo clic
-let dragSrc = null;
+/* ═══════════════════════════════════════════════════
+   ESTADO
+═══════════════════════════════════════════════════ */
+let level = 0, score = 0, attempts = 0;
+let selected = null, dragSrc = null;
 
-/* ─── INIT ──────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════
+   DECORACIÓN
+═══════════════════════════════════════════════════ */
+function buildStars() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() > .85 ? 3 : Math.random() > .6 ? 2 : 1;
+    s.style.cssText = `
+      left:${Math.random()*100}%; top:${Math.random()*60}%;
+      width:${sz}px; height:${sz}px;
+      --d:${2+Math.random()*4}s; --dl:${Math.random()*5}s;
+      --op:${.2+Math.random()*.5};
+    `;
+    c.appendChild(s);
+  }
+}
+
+function buildRunwayLights() {
+  const c = document.getElementById('rlights');
+  const rows = 10;
+  for (let r = 0; r < rows; r++) {
+    const t = 100 - (r / rows) * 55; // porcentaje desde abajo
+    const spread = 20 + r * 8;
+    // luz izquierda
+    [-1, 1].forEach(side => {
+      const d = document.createElement('div');
+      d.className = 'light-dot';
+      const isAmber = r < 3;
+      const size = 4 + r * 1.2;
+      d.style.cssText = `
+        width:${size}px; height:${size}px;
+        bottom:${(r/rows)*55}%; 
+        left:calc(50% + ${side * spread}px);
+        background:${isAmber ? '#ffb300' : '#fff'};
+        box-shadow: 0 0 ${size*2}px ${isAmber ? '#ffb300' : '#fff'};
+        --bd:${.8+Math.random()*.8}s;
+        --bdelay:${Math.random()*.6}s;
+      `;
+      c.appendChild(d);
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
 function initLevel() {
-  selectedCard = null;
-  dragSrc = null;
-  attempts = 0;
+  selected = null; dragSrc = null; attempts = 0;
 
-  const shuffled = [...levels[currentLevel].phases].sort(() => Math.random() - 0.5);
+  const lv = levels[level];
+  const shuffled = [...lv.phases].sort(() => Math.random() - 0.5);
 
-  document.getElementById('source-zone').innerHTML = '';
-  document.getElementById('target-zone').innerHTML = '';
-  document.getElementById('feedback-banner').className = 'feedback-banner';
-  document.getElementById('level-display').textContent = currentLevel + 1;
+  document.getElementById('source-row').innerHTML = '';
+  document.getElementById('target-row').innerHTML = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('level-title').textContent = lv.title;
+  document.getElementById('level-display').textContent = level + 1;
   document.getElementById('attempts-display').textContent = 0;
-  document.getElementById('hint-body').innerHTML = levels[currentLevel].hint;
+  document.getElementById('hint-body').innerHTML = lv.hint;
   document.getElementById('hint-body').classList.remove('show');
   document.getElementById('hint-arrow').textContent = '▼';
 
-  shuffled.forEach(p => {
-    document.getElementById('source-zone').appendChild(createCard(p));
-  });
+  shuffled.forEach(p => document.getElementById('source-row').appendChild(mkCard(p)));
+  updateCounts();
 }
 
-/* ─── CREAR TARJETA ─────────────────────────────────── */
-function createCard(phase) {
+function updateCounts() {
+  document.getElementById('src-count').textContent = document.querySelectorAll('#source-row .phase-card').length;
+  document.getElementById('tgt-count').textContent = document.querySelectorAll('#target-row .phase-card').length;
+}
+
+/* ═══════════════════════════════════════════════════
+   CREAR TARJETA
+═══════════════════════════════════════════════════ */
+function mkCard(phase) {
   const card = document.createElement('div');
   card.className = 'phase-card';
   card.draggable = true;
-  card.dataset.order = phase.order;
-  card.innerHTML = `
-    <span class="card-emoji">${phase.emoji}</span>
-    <span class="card-text">${phase.text}</span>
-    <span class="card-num">${phase.order}</span>
-  `;
+  card.dataset.order = phase.o;
+  card.innerHTML = `<span class="ce">${phase.e}</span><span class="ct">${phase.t}</span><span class="cn">${phase.o}</span>`;
 
-  /* --- MODO CLIC (selección) --- */
-  card.addEventListener('click', () => handleCardClick(card));
+  /* CLIC */
+  card.addEventListener('click', () => handleClick(card));
 
-  /* --- DRAG: tarjeta como fuente --- */
+  /* DRAG SOURCE */
   card.addEventListener('dragstart', e => {
     dragSrc = card;
     e.dataTransfer.effectAllowed = 'move';
@@ -363,189 +644,179 @@ function createCard(phase) {
   });
   card.addEventListener('dragend', () => {
     card.classList.remove('dragging');
-    clearDragOver();
+    clearHover();
     dragSrc = null;
+    updateCounts();
   });
 
-  /* --- DRAG: tarjeta como destino (reordenar) --- */
+  /* DRAG TARGET (reordenar) */
   card.addEventListener('dragover', e => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
     if (dragSrc && dragSrc !== card) card.classList.add('drag-over-card');
   });
   card.addEventListener('dragleave', () => card.classList.remove('drag-over-card'));
   card.addEventListener('drop', e => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     card.classList.remove('drag-over-card');
     if (!dragSrc || dragSrc === card) return;
-    insertBefore(dragSrc, card);
+    card.parentNode.insertBefore(dragSrc, card);
+    updateCounts();
   });
 
   return card;
 }
 
-/* ─── MODO CLIC ─────────────────────────────────────── */
-function handleCardClick(card) {
-  // Si ya había una tarjeta seleccionada
-  if (selectedCard) {
-    if (selectedCard === card) {
-      // Deseleccionar
-      card.style.outline = '';
-      card.style.transform = '';
-      selectedCard = null;
-      return;
-    }
-    // Mover selectedCard justo antes de card (si están en el mismo contenedor)
-    // o al contenedor de card si están en contenedores distintos
-    const srcContainer = selectedCard.parentNode;
-    const dstContainer = card.parentNode;
-
-    if (srcContainer === dstContainer) {
-      insertBefore(selectedCard, card);
-    } else {
-      dstContainer.insertBefore(selectedCard, card);
-    }
-    selectedCard.style.outline = '';
-    selectedCard.style.transform = '';
-    selectedCard = null;
+/* ═══════════════════════════════════════════════════
+   CLIC — SELECCIONAR & MOVER
+═══════════════════════════════════════════════════ */
+function handleClick(card) {
+  // Deseleccionar misma tarjeta
+  if (selected === card) {
+    deselect();
     return;
   }
-  // Primera selección
-  selectedCard = card;
-  card.style.outline = '3px solid #fbbf24';
-  card.style.transform = 'scale(1.04)';
+  // Si hay seleccionada y se clica otra tarjeta → insertar antes
+  if (selected) {
+    card.parentNode.insertBefore(selected, card);
+    deselect();
+    updateCounts();
+    return;
+  }
+  // Seleccionar
+  selected = card;
+  card.classList.add('selected');
 }
 
-/* ─── ZONAS DROPPABLES ──────────────────────────────── */
-function setupZones() {
-  ['zone-source','zone-target'].forEach(zoneId => {
-    const zone = document.getElementById(zoneId);
-    const container = zone.querySelector('.cards-container');
+function deselect() {
+  if (selected) { selected.classList.remove('selected'); selected = null; }
+}
 
-    zone.addEventListener('dragover', e => {
+/* ═══════════════════════════════════════════════════
+   ZONAS DROPPABLES
+═══════════════════════════════════════════════════ */
+function setupZones() {
+  ['source-row','target-row'].forEach(id => {
+    const row = document.getElementById(id);
+
+    row.addEventListener('dragover', e => {
       e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      zone.classList.add('drag-over-zone');
+      row.classList.add('drag-over-zone');
     });
-    zone.addEventListener('dragleave', e => {
-      // Solo quitar si realmente salimos de la zona
-      if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over-zone');
+    row.addEventListener('dragleave', e => {
+      if (!row.contains(e.relatedTarget)) row.classList.remove('drag-over-zone');
     });
-    zone.addEventListener('drop', e => {
+    row.addEventListener('drop', e => {
       e.preventDefault();
-      zone.classList.remove('drag-over-zone');
+      row.classList.remove('drag-over-zone');
       if (!dragSrc) return;
-      // Si se soltó sobre una tarjeta, el handler de tarjeta ya lo manejó
-      // Solo actuar si se soltó en zona vacía o en el fondo
-      const overCard = e.target.closest('.phase-card');
-      if (!overCard) {
-        container.appendChild(dragSrc);
+      if (!e.target.closest('.phase-card')) {
+        row.appendChild(dragSrc);
+        updateCounts();
       }
     });
 
-    // Clic en zona vacía para mover tarjeta seleccionada
-    zone.addEventListener('click', e => {
-      if (!selectedCard) return;
-      const overCard = e.target.closest('.phase-card');
-      if (overCard) return; // lo manejó handleCardClick
-      container.appendChild(selectedCard);
-      selectedCard.style.outline = '';
-      selectedCard.style.transform = '';
-      selectedCard = null;
+    /* CLIC en zona vacía → mover tarjeta seleccionada */
+    row.addEventListener('click', e => {
+      if (!selected) return;
+      if (e.target.closest('.phase-card')) return;
+      row.appendChild(selected);
+      deselect();
+      updateCounts();
     });
   });
 }
 
-function clearDragOver() {
+function clearHover() {
   document.querySelectorAll('.drag-over-card').forEach(c => c.classList.remove('drag-over-card'));
   document.querySelectorAll('.drag-over-zone').forEach(z => z.classList.remove('drag-over-zone'));
 }
 
-function insertBefore(moving, reference) {
-  reference.parentNode.insertBefore(moving, reference);
-}
-
-/* ─── VERIFICAR ORDEN ───────────────────────────────── */
+/* ═══════════════════════════════════════════════════
+   VERIFICAR
+═══════════════════════════════════════════════════ */
 function checkOrder() {
-  const cards = document.querySelectorAll('#target-zone .phase-card');
+  const cards = [...document.querySelectorAll('#target-row .phase-card')];
   attempts++;
   document.getElementById('attempts-display').textContent = attempts;
 
   if (cards.length === 0) {
-    showFeedback('lose', '😅 ¡Mueve las tarjetas al panel derecho primero!');
+    showFeedback('lose','😅 ¡Mueve las fases a la zona de secuencia primero!');
     return;
   }
-  const total = levels[currentLevel].phases.length;
+  const total = levels[level].phases.length;
   if (cards.length < total) {
-    showFeedback('lose', `🤔 Faltan ${total - cards.length} fase(s). ¡Mueve todas al panel derecho!`);
+    showFeedback('lose',`🤔 Faltan ${total - cards.length} fase(s). ¡Mueve todas a la secuencia!`);
     return;
   }
 
-  let allOk = true;
-  cards.forEach((card, idx) => {
-    const ok = parseInt(card.dataset.order) === idx + 1;
-    card.classList.toggle('correct-card', ok);
-    card.classList.toggle('wrong-card', !ok);
-    if (!ok) allOk = false;
+  let ok = true;
+  cards.forEach((c, i) => {
+    const correct = parseInt(c.dataset.order) === i + 1;
+    c.classList.toggle('correct-card', correct);
+    c.classList.toggle('wrong-card', !correct);
+    if (!correct) ok = false;
   });
 
-  if (allOk) {
-    const pts = Math.max(10, 30 - (attempts - 1) * 5 + currentLevel * 10);
+  if (ok) {
+    const pts = Math.max(10, 30 - (attempts - 1) * 5 + level * 10);
     score += pts;
     document.getElementById('score-display').textContent = score;
+    confetti();
 
-    launchConfetti();
-
-    if (currentLevel < levels.length - 1) {
-      showFeedback('win', `🎉 ¡Perfecto! +${pts} puntos ✨ ¡Pasas al ${levels[currentLevel + 1].name}!`);
-      setTimeout(() => { currentLevel++; initLevel(); }, 2800);
+    if (level < levels.length - 1) {
+      showFeedback('win', `🎉 ¡Perfecto! +${pts} pts · Pasas al ${levels[level + 1].title}`);
+      setTimeout(() => { level++; initLevel(); }, 2800);
     } else {
-      showFeedback('win', `🏆 ¡Eres una maestra del vuelo! Completaste los 3 niveles con ${score} puntos. ¡Lista para volar! ✈️`);
+      showFeedback('win', `🏆 ¡MAESTRA DEL CIELO! ${score} puntos totales. ¡Estás lista para volar! ✈️`);
     }
   } else {
-    showFeedback('lose', '❌ Algunas están fuera de lugar (marcadas en rojo). ¡Sigue intentando!');
+    showFeedback('lose','❌ Algunas fases están fuera de lugar (en rojo). ¡Sigue intentando!');
   }
 }
 
-function resetLevel() {
-  initLevel();
-}
+function resetLevel() { initLevel(); }
 
 function showFeedback(type, msg) {
-  const b = document.getElementById('feedback-banner');
-  b.textContent = msg;
-  b.className = `feedback-banner ${type}`;
+  const el = document.getElementById('feedback');
+  el.textContent = msg;
+  el.className = `feedback ${type}`;
 }
 
 function toggleHint() {
-  const body = document.getElementById('hint-body');
-  const arrow = document.getElementById('hint-arrow');
-  body.classList.toggle('show');
-  arrow.textContent = body.classList.contains('show') ? '▲' : '▼';
+  const b = document.getElementById('hint-body');
+  const a = document.getElementById('hint-arrow');
+  b.classList.toggle('show');
+  a.textContent = b.classList.contains('show') ? '▲' : '▼';
 }
 
-function launchConfetti() {
-  const colors = ['#fbbf24','#34d399','#60a5fa','#f472b6','#a78bfa','#fb923c','#f87171'];
-  for (let i = 0; i < 70; i++) {
+/* ═══════════════════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════════════════ */
+function confetti() {
+  const cols = ['#f5c518','#00e676','#29b6f6','#ff6ec7','#b39ddb','#fb923c','#f87171'];
+  for (let i = 0; i < 80; i++) {
     const p = document.createElement('div');
     p.className = 'confetti-piece';
-    const size = 6 + Math.random() * 10;
+    const sz = 6 + Math.random() * 10;
     p.style.cssText = `
-      left:${Math.random()*100}vw; top:-10px;
-      width:${size}px; height:${size}px;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
+      left:${Math.random()*100}vw; top:-12px;
+      width:${sz}px; height:${sz}px;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
       border-radius:${Math.random()>.5?'50%':'3px'};
-      --dur:${0.8+Math.random()*1.6}s;
-      --drift:${(Math.random()-.5)*220}px;
-      animation-delay:${Math.random()*.5}s;
+      --d:${.7+Math.random()*1.8}s;
+      --dx:${(Math.random()-.5)*260}px;
+      animation-delay:${Math.random()*.6}s;
     `;
     document.body.appendChild(p);
-    setTimeout(() => p.remove(), 3000);
+    setTimeout(() => p.remove(), 3200);
   }
 }
 
-/* ─── ARRANCAR ──────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════
+   ARRANCAR
+═══════════════════════════════════════════════════ */
+buildStars();
+buildRunwayLights();
 setupZones();
 initLevel();
 </script>
