@@ -8,424 +8,210 @@
 <style>
   :root {
     --sky1: #0ea5e9;
-    --sky2: #38bdf8;
-    --cloud: #f0f9ff;
-    --sun: #fbbf24;
-    --sun2: #f59e0b;
     --green: #22c55e;
     --red: #f43f5e;
-    --purple: #a78bfa;
     --orange: #fb923c;
-    --pink: #f472b6;
-    --dark: #0f172a;
-    --card-bg: #ffffff;
-    --shadow: rgba(0,0,0,0.12);
+    --sun: #fbbf24;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'Nunito', sans-serif;
-    background: linear-gradient(180deg, #0369a1 0%, #0ea5e9 35%, #7dd3fc 70%, #bae6fd 100%);
+    background: linear-gradient(180deg, #0369a1 0%, #0ea5e9 40%, #7dd3fc 75%, #bae6fd 100%);
     min-height: 100vh;
     padding: 20px;
     overflow-x: hidden;
     position: relative;
   }
 
-  /* Nubes decorativas */
-  .cloud-deco {
-    position: fixed;
-    background: white;
-    border-radius: 50px;
-    opacity: 0.18;
-    pointer-events: none;
-    filter: blur(2px);
-  }
-  .cloud-deco::before, .cloud-deco::after {
-    content: '';
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-  }
-  .c1 { width: 160px; height: 50px; top: 8%; left: -2%; animation: driftCloud 18s linear infinite; }
-  .c1::before { width: 80px; height: 80px; top: -40px; left: 20px; }
-  .c1::after { width: 60px; height: 60px; top: -30px; left: 70px; }
-  .c2 { width: 200px; height: 60px; top: 20%; right: -5%; animation: driftCloud 25s linear infinite reverse; opacity: 0.12; }
-  .c2::before { width: 90px; height: 90px; top: -45px; left: 30px; }
-  .c2::after { width: 70px; height: 70px; top: -35px; left: 90px; }
-  .c3 { width: 140px; height: 44px; top: 60%; left: 5%; animation: driftCloud 20s linear infinite; opacity: 0.1; }
-  .c3::before { width: 70px; height: 70px; top: -35px; left: 15px; }
-
-  @keyframes driftCloud {
-    0% { transform: translateX(-120px); }
-    100% { transform: translateX(calc(100vw + 120px)); }
-  }
-
   /* Sol */
   .sun {
-    position: fixed;
-    top: -40px;
-    right: 60px;
-    width: 120px;
-    height: 120px;
+    position: fixed; top: -40px; right: 60px;
+    width: 120px; height: 120px;
     background: radial-gradient(circle, #fde68a, #fbbf24);
     border-radius: 50%;
-    box-shadow: 0 0 60px rgba(251,191,36,0.5), 0 0 120px rgba(251,191,36,0.2);
+    box-shadow: 0 0 60px rgba(251,191,36,0.5);
     animation: pulseSun 4s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
   @keyframes pulseSun {
-    0%, 100% { box-shadow: 0 0 60px rgba(251,191,36,0.5), 0 0 120px rgba(251,191,36,0.2); }
-    50% { box-shadow: 0 0 80px rgba(251,191,36,0.7), 0 0 160px rgba(251,191,36,0.3); }
+    0%,100% { box-shadow: 0 0 60px rgba(251,191,36,0.5); }
+    50% { box-shadow: 0 0 90px rgba(251,191,36,0.7); }
   }
 
-  .wrapper {
-    max-width: 680px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
+  /* Nubes */
+  .cloud { position:fixed; pointer-events:none; opacity:0.15; z-index:0; }
+  .cloud span {
+    display:block; background:white; border-radius:50px;
+    position:relative;
+  }
+  .cloud span::before, .cloud span::after {
+    content:''; position:absolute; background:white; border-radius:50%;
+  }
+  .c1 { top:8%; animation: drift 20s linear infinite; }
+  .c1 span { width:160px; height:44px; }
+  .c1 span::before { width:70px;height:70px;top:-38px;left:20px; }
+  .c1 span::after  { width:55px;height:55px;top:-28px;left:75px; }
+  .c2 { top:22%; right:0; animation: drift 28s linear infinite reverse; opacity:0.1; }
+  .c2 span { width:200px; height:55px; }
+  .c2 span::before { width:85px;height:85px;top:-44px;left:28px; }
+  .c2 span::after  { width:65px;height:65px;top:-32px;left:95px; }
+  @keyframes drift {
+    from { transform: translateX(-250px); }
+    to   { transform: translateX(110vw); }
   }
 
-  /* HEADER */
-  .game-header {
-    text-align: center;
-    margin-bottom: 24px;
-  }
+  .wrapper { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
 
-  .plane-emoji {
-    font-size: 3rem;
-    display: block;
-    animation: planeFly 2s ease-in-out infinite;
-    margin-bottom: 8px;
-  }
+  /* Header */
+  .game-header { text-align:center; margin-bottom:20px; }
+  .plane-emoji { font-size:3rem; display:block; animation:planeFly 2s ease-in-out infinite; margin-bottom:6px; }
   @keyframes planeFly {
-    0%, 100% { transform: translateY(0) rotate(-3deg); }
-    50% { transform: translateY(-10px) rotate(3deg); }
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50%      { transform: translateY(-10px) rotate(3deg); }
   }
-
   h1 {
-    font-family: 'Fredoka One', cursive;
-    font-size: clamp(1.8rem, 6vw, 2.8rem);
-    color: white;
-    text-shadow: 0 3px 0 rgba(0,0,0,0.2);
-    letter-spacing: 0.02em;
-    margin-bottom: 6px;
+    font-family:'Fredoka One',cursive;
+    font-size: clamp(1.8rem,6vw,2.8rem);
+    color:white; text-shadow:0 3px 0 rgba(0,0,0,0.2);
+    margin-bottom:4px;
   }
+  .subtitle { color:rgba(255,255,255,0.85); font-size:.95rem; font-weight:600; }
 
-  .subtitle {
-    color: rgba(255,255,255,0.85);
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-
-  /* SCOREBOARD */
-  .scoreboard {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-  }
-
+  /* Scoreboard */
+  .scoreboard { display:flex; gap:10px; justify-content:center; margin-bottom:18px; flex-wrap:wrap; }
   .score-chip {
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 100px;
-    padding: 8px 20px;
-    color: white;
-    font-weight: 800;
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    background:rgba(255,255,255,0.2); backdrop-filter:blur(8px);
+    border:2px solid rgba(255,255,255,0.3); border-radius:100px;
+    padding:7px 18px; color:white; font-weight:800; font-size:.9rem;
+    display:flex; align-items:center; gap:5px;
   }
 
-  /* INSTRUCCIONES */
+  /* Instrucciones */
   .instructions {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(8px);
-    border: 2px dashed rgba(255,255,255,0.4);
-    border-radius: 20px;
-    padding: 16px 20px;
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 24px;
-    line-height: 1.5;
+    background:rgba(255,255,255,0.15); backdrop-filter:blur(8px);
+    border:2px dashed rgba(255,255,255,0.4); border-radius:18px;
+    padding:14px 18px; color:white; font-size:.88rem; font-weight:600;
+    text-align:center; margin-bottom:20px; line-height:1.5;
   }
 
-  /* ZONA DE JUEGO */
-  .game-area {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 24px;
-  }
-
-  @media (max-width: 500px) {
-    .game-area { grid-template-columns: 1fr; }
-  }
-
-  .zone {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-    border: 2px dashed rgba(255,255,255,0.35);
-    border-radius: 20px;
-    padding: 14px;
-    min-height: 320px;
-  }
-
-  .zone-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1rem;
-    color: white;
-    text-align: center;
-    margin-bottom: 12px;
-    letter-spacing: 0.05em;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  }
-
-  .cards-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-height: 260px;
-  }
-
-  /* TARJETAS */
-  .phase-card {
-    background: white;
-    border-radius: 14px;
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: grab;
-    user-select: none;
-    transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 3px 10px var(--shadow);
-    border: 3px solid transparent;
-    touch-action: none;
-  }
-  .phase-card:active { cursor: grabbing; }
-  .phase-card.dragging {
-    opacity: 0.5;
-    transform: scale(0.95);
-  }
-  .phase-card.drag-over {
-    border-color: var(--sky1);
-    transform: scale(1.02);
-  }
-  .phase-card.correct-card {
-    border-color: var(--green);
-    background: #f0fdf4;
-    animation: popIn 0.3s ease;
-  }
-  .phase-card.wrong-card {
-    border-color: var(--red);
-    background: #fff1f2;
-    animation: shake 0.4s ease;
-  }
-  @keyframes popIn {
-    0% { transform: scale(0.9); }
-    60% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-6px); }
-    40% { transform: translateX(6px); }
-    60% { transform: translateX(-4px); }
-    80% { transform: translateX(4px); }
-  }
-
-  .card-emoji {
-    font-size: 1.4rem;
-    flex-shrink: 0;
-  }
-  .card-text {
-    font-weight: 700;
-    font-size: 0.88rem;
-    color: #1e293b;
-    line-height: 1.3;
-  }
-  .card-num {
-    margin-left: auto;
-    background: #e0f2fe;
-    color: #0369a1;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 800;
-    flex-shrink: 0;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .correct-card .card-num {
-    opacity: 1;
-    background: var(--green);
-    color: white;
-  }
-
-  /* DRAG PLACEHOLDER */
-  .drop-placeholder {
-    height: 52px;
-    border: 2px dashed rgba(255,255,255,0.5);
-    border-radius: 12px;
-    background: rgba(255,255,255,0.05);
-  }
-
-  /* BOTONES */
-  .btn-row {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-
-  .btn-check {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.1rem;
-    background: linear-gradient(135deg, var(--green), #16a34a);
-    color: white;
-    border: none;
-    border-radius: 100px;
-    padding: 14px 36px;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #15803d, 0 6px 20px rgba(34,197,94,0.4);
-    transition: all 0.15s;
-    letter-spacing: 0.02em;
-  }
-  .btn-check:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #15803d, 0 8px 24px rgba(34,197,94,0.5); }
-  .btn-check:active { transform: translateY(2px); box-shadow: 0 2px 0 #15803d; }
-
-  .btn-reset {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.1rem;
-    background: linear-gradient(135deg, var(--orange), #ea580c);
-    color: white;
-    border: none;
-    border-radius: 100px;
-    padding: 14px 28px;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #c2410c, 0 6px 20px rgba(251,146,60,0.4);
-    transition: all 0.15s;
-  }
-  .btn-reset:hover { transform: translateY(-2px); }
-  .btn-reset:active { transform: translateY(2px); box-shadow: 0 2px 0 #c2410c; }
-
-  /* FEEDBACK */
+  /* Feedback */
   .feedback-banner {
-    text-align: center;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.3rem;
-    padding: 16px 24px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-    display: none;
-    animation: slideDown 0.4s ease both;
+    text-align:center; font-family:'Fredoka One',cursive; font-size:1.1rem;
+    padding:14px 20px; border-radius:18px; margin-bottom:16px;
+    display:none; animation:slideDown .4s ease both;
   }
   @keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { transform:translateY(-16px); opacity:0; }
+    to   { transform:translateY(0); opacity:1; }
   }
-  .feedback-banner.win {
-    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-    color: #15803d;
-    border: 3px solid #86efac;
-    display: block;
+  .feedback-banner.win  { background:linear-gradient(135deg,#dcfce7,#bbf7d0); color:#15803d; border:3px solid #86efac; display:block; }
+  .feedback-banner.lose { background:linear-gradient(135deg,#fff1f2,#ffe4e6); color:#be123c; border:3px solid #fda4af; display:block; }
+
+  /* Zona de juego */
+  .game-area { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+  @media(max-width:480px){ .game-area { grid-template-columns:1fr; } }
+
+  .zone {
+    background:rgba(255,255,255,0.12); backdrop-filter:blur(8px);
+    border:2px dashed rgba(255,255,255,0.4); border-radius:20px;
+    padding:12px; min-height:300px;
+    transition: background .2s, border-color .2s;
   }
-  .feedback-banner.lose {
-    background: linear-gradient(135deg, #fff1f2, #ffe4e6);
-    color: #be123c;
-    border: 3px solid #fda4af;
-    display: block;
+  .zone.drag-over-zone {
+    background:rgba(255,255,255,0.25);
+    border-color:rgba(255,255,255,0.8);
+  }
+  .zone-title {
+    font-family:'Fredoka One',cursive; font-size:1rem; color:white;
+    text-align:center; margin-bottom:10px;
+    text-shadow:0 2px 4px rgba(0,0,0,0.2);
   }
 
-  /* PISTA */
+  .cards-container { display:flex; flex-direction:column; gap:7px; min-height:260px; }
+
+  /* Tarjetas */
+  .phase-card {
+    background:white; border-radius:13px; padding:11px 13px;
+    display:flex; align-items:center; gap:9px;
+    cursor:grab; user-select:none;
+    box-shadow:0 3px 10px rgba(0,0,0,0.12);
+    border:3px solid transparent;
+    transition: transform .15s, box-shadow .15s, border-color .15s, opacity .15s;
+    touch-action:none;
+  }
+  .phase-card:active { cursor:grabbing; }
+  .phase-card.dragging { opacity:.4; transform:scale(.96); }
+  .phase-card.drag-over-card { border-color:var(--sky1); transform:scale(1.03); }
+
+  .phase-card.correct-card { border-color:var(--green); background:#f0fdf4; animation:popIn .3s ease; }
+  .phase-card.wrong-card   { border-color:var(--red);   background:#fff1f2; animation:shake .4s ease; }
+  @keyframes popIn { 0%{transform:scale(.9)}60%{transform:scale(1.06)}100%{transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)} }
+
+  .card-emoji { font-size:1.3rem; flex-shrink:0; }
+  .card-text  { font-weight:700; font-size:.85rem; color:#1e293b; line-height:1.3; flex:1; }
+  .card-num {
+    margin-left:auto; background:#e0f2fe; color:#0369a1;
+    width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:800; flex-shrink:0;
+    opacity:0; transition:opacity .3s;
+  }
+  .correct-card .card-num { opacity:1; background:var(--green); color:white; }
+
+  /* Botones */
+  .btn-row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:18px; }
+  .btn-check {
+    font-family:'Fredoka One',cursive; font-size:1.05rem;
+    background:linear-gradient(135deg,var(--green),#16a34a);
+    color:white; border:none; border-radius:100px; padding:13px 34px;
+    cursor:pointer; box-shadow:0 4px 0 #15803d, 0 6px 18px rgba(34,197,94,.4);
+    transition:all .15s;
+  }
+  .btn-check:hover { transform:translateY(-2px); }
+  .btn-check:active { transform:translateY(2px); box-shadow:0 2px 0 #15803d; }
+  .btn-reset {
+    font-family:'Fredoka One',cursive; font-size:1.05rem;
+    background:linear-gradient(135deg,var(--orange),#ea580c);
+    color:white; border:none; border-radius:100px; padding:13px 26px;
+    cursor:pointer; box-shadow:0 4px 0 #c2410c, 0 6px 18px rgba(251,146,60,.4);
+    transition:all .15s;
+  }
+  .btn-reset:hover { transform:translateY(-2px); }
+  .btn-reset:active { transform:translateY(2px); box-shadow:0 2px 0 #c2410c; }
+
+  /* Pista */
   .hint-section {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-    border: 2px solid rgba(255,255,255,0.25);
-    border-radius: 16px;
-    padding: 14px 18px;
-    margin-bottom: 20px;
+    background:rgba(255,255,255,0.12); backdrop-filter:blur(8px);
+    border:2px solid rgba(255,255,255,0.25); border-radius:16px;
+    padding:13px 17px; margin-bottom:20px;
   }
   .hint-toggle {
-    background: none;
-    border: none;
-    color: white;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 0.95rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    text-align: left;
+    background:none; border:none; color:white;
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:.9rem;
+    cursor:pointer; display:flex; align-items:center; gap:7px; width:100%;
   }
-  .hint-body {
-    display: none;
-    margin-top: 10px;
-    color: rgba(255,255,255,0.9);
-    font-size: 0.85rem;
-    font-weight: 600;
-    line-height: 1.8;
-  }
-  .hint-body.show { display: block; }
+  .hint-body { display:none; margin-top:9px; color:rgba(255,255,255,.9); font-size:.85rem; font-weight:600; line-height:1.7; }
+  .hint-body.show { display:block; }
 
-  /* CONFETTI */
+  /* Confetti */
   .confetti-piece {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    pointer-events: none;
-    z-index: 999;
-    animation: confettiFall var(--dur) ease-in both;
+    position:fixed; pointer-events:none; z-index:999;
+    animation:confettiFall var(--dur) ease-in both;
   }
   @keyframes confettiFall {
-    0% { transform: translateY(-20px) rotate(0deg) translateX(0); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg) translateX(var(--drift)); opacity: 0; }
+    0%   { transform:translateY(-20px) rotate(0deg) translateX(0); opacity:1; }
+    100% { transform:translateY(100vh) rotate(720deg) translateX(var(--drift)); opacity:0; }
   }
-
-  /* NIVEL completado */
-  .level-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--sun), var(--orange));
-    color: white;
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.85rem;
-    padding: 4px 14px;
-    border-radius: 100px;
-    margin-left: 8px;
-    vertical-align: middle;
-  }
-
-  /* Score animado */
-  @keyframes scoreUp {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-  }
-  .score-anim { animation: scoreUp 0.4s ease; }
+  @keyframes scoreUp { 0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)} }
+  .score-anim { animation:scoreUp .4s ease; }
 </style>
 </head>
 <body>
 
-<div class="cloud-deco c1"></div>
-<div class="cloud-deco c2"></div>
-<div class="cloud-deco c3"></div>
+<div class="cloud c1"><span></span></div>
+<div class="cloud c2"><span></span></div>
 <div class="sun"></div>
 
 <div class="wrapper">
@@ -444,17 +230,18 @@
 
   <div class="feedback-banner" id="feedback-banner"></div>
 
-  <div class="instructions" id="instructions-box">
-    👇 <strong>Arrastra</strong> las tarjetas del panel izquierdo al panel derecho<br>
-    y ordénalas según ocurren en un vuelo real ✈️
+  <div class="instructions">
+    👇 <strong>Haz clic en una tarjeta</strong> para seleccionarla (se resalta),
+    luego <strong>haz clic en la zona derecha</strong> para moverla ahí.<br>
+    También puedes <strong>arrastrarla</strong> si lo prefieres. ✈️
   </div>
 
   <div class="game-area">
-    <div class="zone">
+    <div class="zone" id="zone-source">
       <div class="zone-title">📦 Fases disponibles</div>
       <div class="cards-container" id="source-zone"></div>
     </div>
-    <div class="zone">
+    <div class="zone" id="zone-target">
       <div class="zone-title">🛫 Tu orden de vuelo</div>
       <div class="cards-container" id="target-zone"></div>
     </div>
@@ -462,7 +249,7 @@
 
   <div class="btn-row">
     <button class="btn-check" onclick="checkOrder()">✓ Verificar orden</button>
-    <button class="btn-reset" onclick="resetLevel()">↺ Mezclar</button>
+    <button class="btn-reset" onclick="resetLevel()">↺ Reiniciar</button>
   </div>
 
   <div class="hint-section">
@@ -475,86 +262,85 @@
 </div>
 
 <script>
+/* ─── DATA ─────────────────────────────────────────── */
 const levels = [
   {
-    name: "Nivel 1 — Las Básicas",
-    hint: "Recuerda: primero entran los pasajeros, luego el avión rueda, despega, sube, llega a crucero, baja, se aproxima, aterriza y vuelve a la puerta.",
+    name: "Nivel 2 — Solo las críticas",
+    hint: "Primero embarcan los pasajeros, el avión rueda a la pista, despega, sube, vuela en crucero, baja, se aproxima, aterriza y vuelve a la puerta.",
     phases: [
       { text: "Embarque y puesta en marcha", emoji: "🚪", order: 1 },
-      { text: "Rodaje (Taxi)", emoji: "🛞", order: 2 },
-      { text: "Despegue", emoji: "🛫", order: 3 },
-      { text: "Ascenso", emoji: "📈", order: 4 },
-      { text: "Crucero", emoji: "☁️", order: 5 },
-      { text: "Descenso", emoji: "📉", order: 6 },
-      { text: "Aproximación", emoji: "🎯", order: 7 },
-      { text: "Aterrizaje", emoji: "🛬", order: 8 },
-      { text: "Rodaje a puerta", emoji: "🏁", order: 9 },
+      { text: "Rodaje (Taxi)",                emoji: "🛞", order: 2 },
+      { text: "Despegue",                     emoji: "🛫", order: 3 },
+      { text: "Ascenso",                      emoji: "📈", order: 4 },
+      { text: "Crucero",                      emoji: "☁️", order: 5 },
+      { text: "Descenso",                     emoji: "📉", order: 6 },
+      { text: "Aproximación",                 emoji: "🎯", order: 7 },
+      { text: "Aterrizaje",                   emoji: "🛬", order: 8 },
+      { text: "Rodaje a puerta",              emoji: "🏁", order: 9 },
     ]
   },
   {
-    name: "Nivel 2 — Solo las críticas",
-    hint: "Las fases críticas son Despegue y Aterrizaje. Pero entre ellas va: Ascenso → Crucero → Descenso → Aproximación.",
+    name: "Nivel 2 — Fases críticas",
+    hint: "Las más críticas son Despegue y Aterrizaje. Entre ellas: Ascenso → Crucero → Descenso → Aproximación.",
     phases: [
-      { text: "Despegue", emoji: "🛫", order: 1 },
-      { text: "Ascenso inicial", emoji: "⬆️", order: 2 },
-      { text: "Crucero en ruta", emoji: "✈️", order: 3 },
-      { text: "Inicio de descenso", emoji: "⬇️", order: 4 },
-      { text: "Aproximación final", emoji: "🎯", order: 5 },
-      { text: "Toque de pista", emoji: "🛬", order: 6 },
+      { text: "Despegue",          emoji: "🛫", order: 1 },
+      { text: "Ascenso inicial",   emoji: "⬆️",  order: 2 },
+      { text: "Crucero en ruta",   emoji: "✈️",  order: 3 },
+      { text: "Inicio de descenso",emoji: "⬇️",  order: 4 },
+      { text: "Aproximación final",emoji: "🎯", order: 5 },
+      { text: "Toque de pista",    emoji: "🛬", order: 6 },
     ]
   },
   {
     name: "Nivel 3 — Maestra del cielo 🏆",
-    hint: "Piensa en lo que hace la tripulación: primero preparan la cabina, luego embarque, revisan puertas, despejan, el avión rueda, despega, asciende... ¡y tú ya sabes el resto!",
+    hint: "Primero preparan la cabina, embarque, cierran puertas, pushback, rodaje, despegue, ascenso, servicio, preparan para aterrizaje, descenso, aterrizaje y desembarque.",
     phases: [
-      { text: "Preparación de cabina", emoji: "🧹", order: 1 },
-      { text: "Embarque de pasajeros", emoji: "👥", order: 2 },
-      { text: "Cierre y revisión de puertas", emoji: "🔒", order: 3 },
-      { text: "Pushback y puesta en marcha", emoji: "⚙️", order: 4 },
-      { text: "Rodaje a pista (Taxi)", emoji: "🛞", order: 5 },
-      { text: "Despegue", emoji: "🛫", order: 6 },
-      { text: "Ascenso", emoji: "📈", order: 7 },
-      { text: "Servicio en cabina (Crucero)", emoji: "🍽️", order: 8 },
+      { text: "Preparación de cabina",           emoji: "🧹", order: 1 },
+      { text: "Embarque de pasajeros",           emoji: "👥", order: 2 },
+      { text: "Cierre y revisión de puertas",    emoji: "🔒", order: 3 },
+      { text: "Pushback y puesta en marcha",     emoji: "⚙️", order: 4 },
+      { text: "Rodaje a pista (Taxi)",           emoji: "🛞", order: 5 },
+      { text: "Despegue",                        emoji: "🛫", order: 6 },
+      { text: "Ascenso",                         emoji: "📈", order: 7 },
+      { text: "Servicio en cabina (Crucero)",    emoji: "🍽️", order: 8 },
       { text: "Preparar cabina para aterrizaje", emoji: "💺", order: 9 },
-      { text: "Descenso y Aproximación", emoji: "📉", order: 10 },
-      { text: "Aterrizaje", emoji: "🛬", order: 11 },
-      { text: "Rodaje a puerta y desembarque", emoji: "🚶", order: 12 },
+      { text: "Descenso y Aproximación",         emoji: "📉", order: 10 },
+      { text: "Aterrizaje",                      emoji: "🛬", order: 11 },
+      { text: "Rodaje a puerta y desembarque",   emoji: "🚶", order: 12 },
     ]
   }
 ];
 
+/* ─── STATE ─────────────────────────────────────────── */
 let currentLevel = 0;
 let score = 0;
 let attempts = 0;
+let selectedCard = null;   // para el modo clic
 let dragSrc = null;
 
-function getCurrentPhases() {
-  return [...levels[currentLevel].phases].sort(() => Math.random() - 0.5);
-}
-
+/* ─── INIT ──────────────────────────────────────────── */
 function initLevel() {
-  const shuffled = getCurrentPhases();
-  const src = document.getElementById('source-zone');
-  const tgt = document.getElementById('target-zone');
-  src.innerHTML = '';
-  tgt.innerHTML = '';
+  selectedCard = null;
+  dragSrc = null;
+  attempts = 0;
 
+  const shuffled = [...levels[currentLevel].phases].sort(() => Math.random() - 0.5);
+
+  document.getElementById('source-zone').innerHTML = '';
+  document.getElementById('target-zone').innerHTML = '';
   document.getElementById('feedback-banner').className = 'feedback-banner';
-  document.getElementById('instructions-box').style.display = 'block';
-  document.getElementById('level-display').textContent = `${currentLevel + 1}`;
+  document.getElementById('level-display').textContent = currentLevel + 1;
+  document.getElementById('attempts-display').textContent = 0;
   document.getElementById('hint-body').innerHTML = levels[currentLevel].hint;
   document.getElementById('hint-body').classList.remove('show');
   document.getElementById('hint-arrow').textContent = '▼';
 
   shuffled.forEach(p => {
-    src.appendChild(createCard(p));
+    document.getElementById('source-zone').appendChild(createCard(p));
   });
-
-  // Hacer target zone droppable
-  setupDropZone(src);
-  setupDropZone(tgt);
 }
 
+/* ─── CREAR TARJETA ─────────────────────────────────── */
 function createCard(phase) {
   const card = document.createElement('div');
   card.className = 'phase-card';
@@ -566,170 +352,170 @@ function createCard(phase) {
     <span class="card-num">${phase.order}</span>
   `;
 
-  // Desktop drag
+  /* --- MODO CLIC (selección) --- */
+  card.addEventListener('click', () => handleCardClick(card));
+
+  /* --- DRAG: tarjeta como fuente --- */
   card.addEventListener('dragstart', e => {
     dragSrc = card;
-    card.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => card.classList.add('dragging'), 0);
   });
   card.addEventListener('dragend', () => {
     card.classList.remove('dragging');
-    document.querySelectorAll('.drop-placeholder').forEach(p => p.remove());
+    clearDragOver();
+    dragSrc = null;
   });
+
+  /* --- DRAG: tarjeta como destino (reordenar) --- */
   card.addEventListener('dragover', e => {
     e.preventDefault();
-    card.classList.add('drag-over');
+    e.dataTransfer.dropEffect = 'move';
+    if (dragSrc && dragSrc !== card) card.classList.add('drag-over-card');
   });
-  card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+  card.addEventListener('dragleave', () => card.classList.remove('drag-over-card'));
   card.addEventListener('drop', e => {
     e.preventDefault();
-    card.classList.remove('drag-over');
-    if (dragSrc && dragSrc !== card) {
-      const parent = card.parentNode;
-      const srcParent = dragSrc.parentNode;
-      // Intercambiar o insertar antes
-      const afterCard = card.nextSibling;
-      parent.insertBefore(dragSrc, card);
-      if (afterCard) {
-        srcParent.insertBefore(card, afterCard);
-      } else {
-        srcParent.appendChild(card);
-      }
-    }
-  });
-
-  // Touch support
-  let touchStartX, touchStartY, clone, origParent, origNext;
-  card.addEventListener('touchstart', e => {
-    const t = e.touches[0];
-    touchStartX = t.clientX;
-    touchStartY = t.clientY;
-    origParent = card.parentNode;
-    origNext = card.nextSibling;
-
-    clone = card.cloneNode(true);
-    clone.style.cssText = `position:fixed;z-index:1000;opacity:0.85;pointer-events:none;
-      width:${card.offsetWidth}px;left:${card.getBoundingClientRect().left}px;
-      top:${card.getBoundingClientRect().top}px;transform:scale(1.05);box-shadow:0 8px 24px rgba(0,0,0,0.3);`;
-    document.body.appendChild(clone);
-    card.style.opacity = '0.3';
-  }, { passive: true });
-
-  card.addEventListener('touchmove', e => {
-    e.preventDefault();
-    const t = e.touches[0];
-    clone.style.left = (t.clientX - card.offsetWidth / 2) + 'px';
-    clone.style.top = (t.clientY - 26) + 'px';
-
-    // Encontrar elemento debajo
-    clone.style.display = 'none';
-    const el = document.elementFromPoint(t.clientX, t.clientY);
-    clone.style.display = '';
-    const targetCard = el?.closest('.phase-card');
-    document.querySelectorAll('.phase-card').forEach(c => c.classList.remove('drag-over'));
-    if (targetCard && targetCard !== card) targetCard.classList.add('drag-over');
-  }, { passive: false });
-
-  card.addEventListener('touchend', e => {
-    const t = e.changedTouches[0];
-    clone.remove();
-    card.style.opacity = '';
-    document.querySelectorAll('.phase-card').forEach(c => c.classList.remove('drag-over'));
-
-    clone.style.display = 'none';
-    const el = document.elementFromPoint(t.clientX, t.clientY);
-
-    const targetCard = el?.closest('.phase-card');
-    const targetZone = el?.closest('.cards-container');
-
-    if (targetCard && targetCard !== card) {
-      targetCard.parentNode.insertBefore(card, targetCard);
-    } else if (targetZone && !targetCard) {
-      targetZone.appendChild(card);
-    }
-    // Hacer las zonas target droppables de nuevo
-    setupDropZone(document.getElementById('source-zone'));
-    setupDropZone(document.getElementById('target-zone'));
+    e.stopPropagation();
+    card.classList.remove('drag-over-card');
+    if (!dragSrc || dragSrc === card) return;
+    insertBefore(dragSrc, card);
   });
 
   return card;
 }
 
-function setupDropZone(zone) {
-  zone.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    if (dragSrc) {
-      const target = e.target.closest('.phase-card');
-      if (!target) zone.appendChild(dragSrc);
+/* ─── MODO CLIC ─────────────────────────────────────── */
+function handleCardClick(card) {
+  // Si ya había una tarjeta seleccionada
+  if (selectedCard) {
+    if (selectedCard === card) {
+      // Deseleccionar
+      card.style.outline = '';
+      card.style.transform = '';
+      selectedCard = null;
+      return;
     }
+    // Mover selectedCard justo antes de card (si están en el mismo contenedor)
+    // o al contenedor de card si están en contenedores distintos
+    const srcContainer = selectedCard.parentNode;
+    const dstContainer = card.parentNode;
+
+    if (srcContainer === dstContainer) {
+      insertBefore(selectedCard, card);
+    } else {
+      dstContainer.insertBefore(selectedCard, card);
+    }
+    selectedCard.style.outline = '';
+    selectedCard.style.transform = '';
+    selectedCard = null;
+    return;
+  }
+  // Primera selección
+  selectedCard = card;
+  card.style.outline = '3px solid #fbbf24';
+  card.style.transform = 'scale(1.04)';
+}
+
+/* ─── ZONAS DROPPABLES ──────────────────────────────── */
+function setupZones() {
+  ['zone-source','zone-target'].forEach(zoneId => {
+    const zone = document.getElementById(zoneId);
+    const container = zone.querySelector('.cards-container');
+
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      zone.classList.add('drag-over-zone');
+    });
+    zone.addEventListener('dragleave', e => {
+      // Solo quitar si realmente salimos de la zona
+      if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over-zone');
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over-zone');
+      if (!dragSrc) return;
+      // Si se soltó sobre una tarjeta, el handler de tarjeta ya lo manejó
+      // Solo actuar si se soltó en zona vacía o en el fondo
+      const overCard = e.target.closest('.phase-card');
+      if (!overCard) {
+        container.appendChild(dragSrc);
+      }
+    });
+
+    // Clic en zona vacía para mover tarjeta seleccionada
+    zone.addEventListener('click', e => {
+      if (!selectedCard) return;
+      const overCard = e.target.closest('.phase-card');
+      if (overCard) return; // lo manejó handleCardClick
+      container.appendChild(selectedCard);
+      selectedCard.style.outline = '';
+      selectedCard.style.transform = '';
+      selectedCard = null;
+    });
   });
 }
 
+function clearDragOver() {
+  document.querySelectorAll('.drag-over-card').forEach(c => c.classList.remove('drag-over-card'));
+  document.querySelectorAll('.drag-over-zone').forEach(z => z.classList.remove('drag-over-zone'));
+}
+
+function insertBefore(moving, reference) {
+  reference.parentNode.insertBefore(moving, reference);
+}
+
+/* ─── VERIFICAR ORDEN ───────────────────────────────── */
 function checkOrder() {
-  const targetCards = document.querySelectorAll('#target-zone .phase-card');
+  const cards = document.querySelectorAll('#target-zone .phase-card');
   attempts++;
   document.getElementById('attempts-display').textContent = attempts;
 
-  if (targetCards.length === 0) {
+  if (cards.length === 0) {
     showFeedback('lose', '😅 ¡Mueve las tarjetas al panel derecho primero!');
     return;
   }
-
-  const allPhases = levels[currentLevel].phases;
-  if (targetCards.length < allPhases.length) {
-    showFeedback('lose', `🤔 Faltan ${allPhases.length - targetCards.length} fases por ordenar. ¡Mueve todas al panel derecho!`);
+  const total = levels[currentLevel].phases.length;
+  if (cards.length < total) {
+    showFeedback('lose', `🤔 Faltan ${total - cards.length} fase(s). ¡Mueve todas al panel derecho!`);
     return;
   }
 
-  let allCorrect = true;
-  targetCards.forEach((card, idx) => {
-    const expectedOrder = idx + 1;
-    const actualOrder = parseInt(card.dataset.order);
-    if (actualOrder === expectedOrder) {
-      card.classList.remove('wrong-card');
-      card.classList.add('correct-card');
-    } else {
-      card.classList.remove('correct-card');
-      card.classList.add('wrong-card');
-      allCorrect = false;
-    }
+  let allOk = true;
+  cards.forEach((card, idx) => {
+    const ok = parseInt(card.dataset.order) === idx + 1;
+    card.classList.toggle('correct-card', ok);
+    card.classList.toggle('wrong-card', !ok);
+    if (!ok) allOk = false;
   });
 
-  if (allCorrect) {
-    const pts = Math.max(10, 30 - attempts * 5 + currentLevel * 10);
+  if (allOk) {
+    const pts = Math.max(10, 30 - (attempts - 1) * 5 + currentLevel * 10);
     score += pts;
     document.getElementById('score-display').textContent = score;
-    document.getElementById('score-display').closest('.score-chip').classList.add('score-anim');
-    setTimeout(() => document.getElementById('score-display').closest('.score-chip').classList.remove('score-anim'), 400);
 
     launchConfetti();
 
     if (currentLevel < levels.length - 1) {
       showFeedback('win', `🎉 ¡Perfecto! +${pts} puntos ✨ ¡Pasas al ${levels[currentLevel + 1].name}!`);
-      setTimeout(() => {
-        currentLevel++;
-        attempts = 0;
-        initLevel();
-      }, 2500);
+      setTimeout(() => { currentLevel++; initLevel(); }, 2800);
     } else {
-      showFeedback('win', `🏆 ¡Eres una maestra del vuelo! Completaste los 3 niveles con ${score} puntos. ¡Estás lista para volar! ✈️`);
+      showFeedback('win', `🏆 ¡Eres una maestra del vuelo! Completaste los 3 niveles con ${score} puntos. ¡Lista para volar! ✈️`);
     }
   } else {
-    showFeedback('lose', '❌ Algunos están fuera de lugar. Las tarjetas en rojo necesitan moverse. ¡Sigue intentando!');
+    showFeedback('lose', '❌ Algunas están fuera de lugar (marcadas en rojo). ¡Sigue intentando!');
   }
 }
 
-function showFeedback(type, msg) {
-  const banner = document.getElementById('feedback-banner');
-  banner.textContent = msg;
-  banner.className = `feedback-banner ${type}`;
+function resetLevel() {
+  initLevel();
 }
 
-function resetLevel() {
-  attempts = 0;
-  document.getElementById('attempts-display').textContent = 0;
-  initLevel();
+function showFeedback(type, msg) {
+  const b = document.getElementById('feedback-banner');
+  b.textContent = msg;
+  b.className = `feedback-banner ${type}`;
 }
 
 function toggleHint() {
@@ -741,26 +527,26 @@ function toggleHint() {
 
 function launchConfetti() {
   const colors = ['#fbbf24','#34d399','#60a5fa','#f472b6','#a78bfa','#fb923c','#f87171'];
-  for (let i = 0; i < 60; i++) {
-    const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    piece.style.cssText = `
-      left: ${Math.random() * 100}vw;
-      top: -10px;
-      background: ${colors[Math.floor(Math.random() * colors.length)]};
-      --dur: ${0.8 + Math.random() * 1.5}s;
-      --drift: ${(Math.random() - 0.5) * 200}px;
-      width: ${6 + Math.random() * 10}px;
-      height: ${6 + Math.random() * 10}px;
-      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-      animation-delay: ${Math.random() * 0.5}s;
+  for (let i = 0; i < 70; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    const size = 6 + Math.random() * 10;
+    p.style.cssText = `
+      left:${Math.random()*100}vw; top:-10px;
+      width:${size}px; height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      border-radius:${Math.random()>.5?'50%':'3px'};
+      --dur:${0.8+Math.random()*1.6}s;
+      --drift:${(Math.random()-.5)*220}px;
+      animation-delay:${Math.random()*.5}s;
     `;
-    document.body.appendChild(piece);
-    setTimeout(() => piece.remove(), 3000);
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 3000);
   }
 }
 
-// Iniciar
+/* ─── ARRANCAR ──────────────────────────────────────── */
+setupZones();
 initLevel();
 </script>
 </body>
